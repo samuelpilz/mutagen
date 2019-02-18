@@ -1,0 +1,15 @@
+[package]
+name = "mutagen-preview"
+version = "0.2.0"
+authors = ["Samuel Pilz <samuel.pilz@posteo.net>"]
+edition = "2018"
+
+[dependencies]
+mutagen-preview-transform = { path = "../mutagen-preview-transform" }
+lazy_static = "1.2.0"
+
+
+[features]
+# this is a flag that is required for integration tests to allow setting the environment configuration from tests.
+# This is not intended to be used for users of `mutagen`.
+self-test = []

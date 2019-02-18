@@ -1,0 +1,19 @@
+[package]
+name = "mutagen-preview-transform"
+version = "0.2.0"
+authors = ["power-fungus <samuel.pilz@posteo.net>"]
+edition = "2018"
+
+[dependencies]
+lazy_static = "1.2.0"
+quote = "=0.6.11"
+proc-macro2 = { version = "=0.4.27", features = ["proc-macro", "nightly"] }
+syn = { version = "=0.15.26", features = ["full", "extra-traits", "fold"] }
+# the verison of `syn` is fixed because helper code for default folds is copied from the repository and is probably quite brittle.
+
+
+[dev-dependencies]
+mutagen-preview = { path = "../mutagen-preview" }
+
+[lib]
+proc_macro = true
