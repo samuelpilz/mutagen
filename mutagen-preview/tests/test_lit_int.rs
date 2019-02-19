@@ -10,11 +10,10 @@ fn lit_u32() -> u32 {
 
 #[mutate]
 fn lit_u8() -> u8 {
-    1 + 2
+    1u8 + 2
 }
 
 #[mutate]
-
 fn lit_usize_suffixed() -> usize {
     444usize
 }
