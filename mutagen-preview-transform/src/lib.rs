@@ -6,9 +6,8 @@ use syn::{parse_macro_input, ItemFn};
 mod args;
 mod transform_info;
 mod transformer;
-use args::args;
+use args::MutagenArgs;
 use transform_info::GLOBAL_TRANSFORM_INFO;
-use transformer::*;
 
 #[proc_macro_attribute]
 pub fn mutate(
@@ -18,13 +17,8 @@ pub fn mutate(
     use quote::ToTokens;
 
     // read args and initialize transformers
-    let x = args(attr.into());
-    println!("args: {:#?}", &x);
-    let mut transformers: [Box<dyn MutagenTransformer>; 3] = [
-        box MutagenTransformerLitInt(),
-        box MutagenTransformerLitBool(),
-        box MutagenTransformerStmt(),
-    ];
+    let args = MutagenArgs::args_from_attr(attr.into());
+    let mut transformers = args.transformers;
 
     // setup global info
     GLOBAL_TRANSFORM_INFO
