@@ -14,13 +14,12 @@ pub struct MutagenRuntimeConfig {
 impl MutagenRuntimeConfig {
     /// access the currently active runtime-config based on the environment variable `MUATION_ID`
     pub fn get_default() -> Self {
-        let lock_guard = RUNTIME_CONFIG.lock().unwrap();
+        let mut lock_guard = RUNTIME_CONFIG.lock().unwrap();
         match &*lock_guard {
             None => {
                 // runtime config not initialized -> set default config based on env-var
-                drop(lock_guard);
                 let env_config = MutagenRuntimeConfig::from_env();
-                *RUNTIME_CONFIG.lock().unwrap() = Some(env_config);
+                *lock_guard = Some(env_config);
                 env_config
             }
             Some(config) => *config,
