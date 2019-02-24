@@ -4,9 +4,11 @@ use syn::{parse_quote, Expr, ExprLit, Lit, LitBool};
 
 use super::default_folds::fold_expr_default;
 use super::MutagenTransformer;
-use crate::transform_info::register_global_mutation;
+use crate::transform_info::SharedTransformInfo;
 
-pub struct MutagenTransformerLitBool();
+pub struct MutagenTransformerLitBool {
+    pub transform_info: SharedTransformInfo,
+}
 
 // transforms bool literals to mutator expressions
 impl Fold for MutagenTransformerLitBool {
@@ -16,8 +18,9 @@ impl Fold for MutagenTransformerLitBool {
                 lit: Lit::Bool(LitBool { value, span: _ }),
                 attrs: _,
             }) => {
-                let mutator_id =
-                    register_global_mutation(format!("LitBool {} -> {}", value, !value));
+                let mutator_id = self
+                    .transform_info
+                    .add_mutation(format!("LitBool {} -> {}", value, !value));
                 parse_quote! {
                     ::mutagen_preview::mutator::MutatorLitBool::new(#mutator_id, #value)
                         .run_mutator(

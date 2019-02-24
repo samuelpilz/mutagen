@@ -1,10 +1,13 @@
+
+#![feature(stmt_expr_attributes)]
+
 mod common;
 
 use common::*;
 use mutagen_preview::mutate;
 
 // constant true
-#[mutate]
+#[mutate(conf(local), only(lit_bool))]
 fn simple_true() -> bool {
     true
 }
@@ -22,7 +25,7 @@ fn simple_true_active() {
 }
 
 // constant false
-#[mutate]
+#[mutate(conf(local), only(lit_bool))]
 fn simple_false() -> bool {
     false
 }
@@ -34,7 +37,7 @@ fn simple_false_inactive() {
 }
 #[test]
 fn simple_false_active() {
-    test_with_mutation_id(2, || {
+    test_with_mutation_id(1, || {
         assert_eq!(simple_false(), true);
     })
 }

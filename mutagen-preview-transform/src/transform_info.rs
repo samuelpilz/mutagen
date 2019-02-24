@@ -3,12 +3,14 @@ use std::fmt;
 use std::fs::{create_dir_all, File};
 use std::io::{BufWriter, Write};
 use std::path::Path;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 lazy_static! {
-    pub static ref GLOBAL_TRANSFORM_INFO: Mutex<MutagenTransformInfo> =
-        Mutex::new(MutagenTransformInfo::new());
+    pub static ref GLOBAL_TRANSFORM_INFO: SharedTransformInfo = Default::default();
 }
+
+#[derive(Default)]
+pub struct SharedTransformInfo(Arc<Mutex<MutagenTransformInfo>>);
 
 const DEFAULT_MUTAGEN_DIR: &'static str = "target/mutagen";
 const DEFAULT_MUTAGEN_FILENAME: &'static str = "mutations.txt";
@@ -22,14 +24,16 @@ pub struct MutagenTransformInfo {
     mutagen_file: Option<File>,
 }
 
-impl MutagenTransformInfo {
-    pub fn new() -> Self {
-        MutagenTransformInfo {
+impl Default for MutagenTransformInfo {
+    fn default() -> Self {
+        Self {
             mutations: vec![],
             mutagen_file: None,
         }
     }
+}
 
+impl MutagenTransformInfo {
     pub fn with_default_mutagen_file(&mut self) {
         // open file only once
         if let None = self.mutagen_file {
@@ -65,6 +69,20 @@ impl MutagenTransformInfo {
     }
 }
 
+impl SharedTransformInfo {
+    pub fn add_mutation(&self, mutation: String) -> u32 {
+        self.0.lock().unwrap().add_mutation(mutation)
+    }
+
+    pub fn clone_shared(&self) -> Self {
+        Self(Arc::clone(&self.0))
+    }
+
+    pub fn with_default_mutagen_file(&self) {
+        self.0.lock().unwrap().with_default_mutagen_file()
+    }
+}
+
 impl fmt::Display for MutagenTransformInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         for (i, mutation) in self.mutations.iter().enumerate() {
@@ -72,8 +90,4 @@ impl fmt::Display for MutagenTransformInfo {
         }
         Ok(())
     }
-}
-
-pub fn register_global_mutation(mutation: String) -> u32 {
-    GLOBAL_TRANSFORM_INFO.lock().unwrap().add_mutation(mutation)
 }

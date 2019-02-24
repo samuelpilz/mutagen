@@ -4,9 +4,11 @@ use syn::{parse_quote, Expr, ExprLit, Lit};
 
 use super::default_folds::fold_expr_default;
 use super::MutagenTransformer;
-use crate::transform_info::register_global_mutation;
+use crate::transform_info::SharedTransformInfo;
 
-pub struct MutagenTransformerLitInt();
+pub struct MutagenTransformerLitInt {
+    pub transform_info: SharedTransformInfo,
+}
 
 impl Fold for MutagenTransformerLitInt {
     fn fold_expr(&mut self, e: Expr) -> Expr {
@@ -15,7 +17,9 @@ impl Fold for MutagenTransformerLitInt {
                 lit: Lit::Int(l),
                 attrs: _,
             }) => {
-                let mutator_id = register_global_mutation(format!("LitInt {}", l.value()));
+                let mutator_id = self
+                    .transform_info
+                    .add_mutation(format!("LitInt {}", l.value()));
                 parse_quote! {
                     <::mutagen_preview::mutator::MutatorLitInt<_>>
                         ::new(#mutator_id, #l)

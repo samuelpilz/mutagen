@@ -1,4 +1,5 @@
 #![feature(box_syntax)]
+#![feature(vec_remove_item)]
 
 extern crate proc_macro;
 use syn::{parse_macro_input, ItemFn};
@@ -7,7 +8,6 @@ mod args;
 mod transform_info;
 mod transformer;
 use args::MutagenArgs;
-use transform_info::GLOBAL_TRANSFORM_INFO;
 
 #[proc_macro_attribute]
 pub fn mutate(
@@ -20,12 +20,6 @@ pub fn mutate(
     let args = MutagenArgs::args_from_attr(attr.into());
     let mut transformers = args.transformers;
 
-    // setup global info
-    GLOBAL_TRANSFORM_INFO
-        .lock()
-        .unwrap()
-        .with_default_mutagen_file();
-
     // run transformers one after the other
     let mut result = parse_macro_input!(item as ItemFn);
     for t in &mut transformers {
@@ -33,6 +27,5 @@ pub fn mutate(
     }
     let result = result.into_token_stream().into();
 
-    println!("mutations: {:?}", GLOBAL_TRANSFORM_INFO.lock().unwrap());
     result
 }

@@ -4,16 +4,18 @@ use syn::{parse_quote, Stmt};
 
 use super::default_folds::fold_stmt_default;
 use super::MutagenTransformer;
-use crate::transform_info::register_global_mutation;
+use crate::transform_info::SharedTransformInfo;
 
-pub struct MutagenTransformerStmt();
+pub struct MutagenTransformerStmt {
+    pub transform_info: SharedTransformInfo,
+}
 
 impl Fold for MutagenTransformerStmt {
     fn fold_stmt(&mut self, e: Stmt) -> Stmt {
         match e {
             Stmt::Semi(e, _) => {
                 // WIP: implement check for return-statement
-                let mutator_id = register_global_mutation(format!("Stmt rem"));
+                let mutator_id = self.transform_info.add_mutation(format!("Stmt rem"));
                 parse_quote! {
                     if <::mutagen_preview::mutator::MutatorStmt>::new(#mutator_id)
                         .run_mutator(

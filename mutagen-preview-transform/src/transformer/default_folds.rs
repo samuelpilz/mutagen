@@ -8,6 +8,7 @@ use proc_macro2::Span;
 use syn::fold::Fold;
 use syn::{Expr, Stmt, Token};
 
+// fold an expression
 pub fn fold_expr_default<V: Fold + ?Sized>(visitor: &mut V, i: Expr) -> Expr {
     match i {
         Expr::Box(_binding_0) => Expr::Box(visitor.fold_expr_box(_binding_0)),
