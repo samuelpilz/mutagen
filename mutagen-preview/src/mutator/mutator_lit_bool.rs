@@ -54,4 +54,46 @@ mod tests {
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(1));
         assert_eq!(result, false)
     }
+
+    mod mutate_test {
+
+        use crate::mutate;
+        use ::mutagen_preview::MutagenRuntimeConfig;
+
+        #[mutate(conf(local), only(lit_bool))]
+        fn simple_true() -> bool {
+            true
+        }
+        #[test]
+        fn simple_true_inactive() {
+            MutagenRuntimeConfig::test_with_mutation_id(0, || {
+                assert_eq!(simple_true(), true);
+            })
+        }
+        #[test]
+        fn simple_true_active() {
+            MutagenRuntimeConfig::test_with_mutation_id(1, || {
+                assert_eq!(simple_true(), false);
+            })
+        }
+
+        // constant false
+        #[mutate(conf(local), only(lit_bool))]
+        fn simple_false() -> bool {
+            false
+        }
+        #[test]
+        fn simple_false_inactive() {
+            MutagenRuntimeConfig::test_with_mutation_id(0, || {
+                assert_eq!(simple_false(), false);
+            })
+        }
+        #[test]
+        fn simple_false_active() {
+            MutagenRuntimeConfig::test_with_mutation_id(1, || {
+                assert_eq!(simple_false(), true);
+            })
+        }
+
+    }
 }

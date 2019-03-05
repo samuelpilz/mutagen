@@ -61,7 +61,6 @@ impl<T: IntMutable> MutatorLitInt<T> {
 mod tests {
 
     use super::*;
-    use crate::MutagenRuntimeConfig;
 
     #[test]
     pub fn mutator_lit_int_zero_inactive() {
@@ -69,10 +68,65 @@ mod tests {
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(0));
         assert_eq!(result, 0)
     }
+
     #[test]
     pub fn mutator_lit_int_zero_active() {
         let mutator = MutatorLitInt::new(1, 0);
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(1));
         assert_eq!(result, 1)
+    }
+
+    #[test]
+    fn lit_u8_suffixed() {
+        MutagenRuntimeConfig::test_with_mutation_id(1, || {
+            let mutator = MutatorLitInt::new(1u32, 1u8);
+            let result = mutator.run_mutator(&MutagenRuntimeConfig::get_default());
+            assert_eq!(result, 2);
+        })
+    }
+
+    mod mutate_test {
+        use crate::mutate;
+        use ::mutagen_preview::MutagenRuntimeConfig;
+
+        #[mutate(conf(local), only(lit_int))]
+        fn sum_u32() -> u32 {
+            1 + 2
+        }
+        #[test]
+        fn sum_u32_inactive() {
+            MutagenRuntimeConfig::test_with_mutation_id(0, || {
+                assert_eq!(sum_u32(), 3);
+            })
+        }
+        #[test]
+        fn sum_u32_active1() {
+            MutagenRuntimeConfig::test_with_mutation_id(1, || {
+                assert_eq!(sum_u32(), 4);
+            })
+        }
+        #[test]
+        fn sum_u32_active2() {
+            MutagenRuntimeConfig::test_with_mutation_id(2, || {
+                assert_eq!(sum_u32(), 4);
+            })
+        }
+
+        #[mutate(conf(local), only(lit_int))]
+        fn lit_u8_suffixed() -> u8 {
+            1u8
+        }
+        #[test]
+        fn lit_u8_suffixed_inactive() {
+            MutagenRuntimeConfig::test_with_mutation_id(0, || {
+                assert_eq!(lit_u8_suffixed(), 1);
+            })
+        }
+        #[test]
+        fn lit_u8_suffixed_active() {
+            MutagenRuntimeConfig::test_with_mutation_id(1, || {
+                assert_eq!(lit_u8_suffixed(), 2);
+            })
+        }
     }
 }

@@ -9,7 +9,10 @@ mutagen-preview-transform = { path = "../mutagen-preview-transform" }
 lazy_static = "1.2.0"
 
 
+[dev-dependencies]
+mutagen-preview = { path = ".", features = ["self_test"] }
+
 [features]
 # this is a flag that is required for integration tests to allow setting the environment configuration from tests.
 # This is not intended to be used for users of `mutagen`.
-self-test = []
+self_test = []
