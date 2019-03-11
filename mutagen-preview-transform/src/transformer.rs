@@ -2,10 +2,12 @@ use syn::fold::Fold;
 use syn::ItemFn;
 
 mod default_folds;
+mod transformer_binop_add;
 mod transformer_lit_bool;
 mod transformer_lit_int;
 mod transformer_stmt;
 
+pub use transformer_binop_add::MutagenTransformerBinopAdd;
 pub use transformer_lit_bool::MutagenTransformerLitBool;
 pub use transformer_lit_int::MutagenTransformerLitInt;
 pub use transformer_stmt::MutagenTransformerStmt;

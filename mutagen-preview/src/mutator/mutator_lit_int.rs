@@ -7,42 +7,14 @@ pub struct MutatorLitInt<T> {
     original_lit: T,
 }
 
-macro_rules! lit_int_mutators {
-    { $($suf:ident, $ty:ident),* } => {
-        $(
-            impl IntMutable for $ty {
-                fn add_one(self) -> Self {
-                    self.checked_add(1).expect("overflow")
-                }
-            }
-        )*
-
-    }
-}
-
-lit_int_mutators! {
-    I8, i8,
-    I16, i16,
-    I32, i32,
-    I64, i64,
-    I128, i128,
-    Isize, isize,
-    U8, u8,
-    U16, u16,
-    U32, u32,
-    U64, u64,
-    U128, u128,
-    Usize, usize
-}
-
-// implementation
+// trait for operations that mutate integers of any type
 pub trait IntMutable {
     fn add_one(self) -> Self;
 }
 
 impl<T: IntMutable> MutatorLitInt<T> {
     pub fn new(mutator_id: u32, original_lit: T) -> Self {
-        MutatorLitInt {
+        Self {
             mutator_id,
             original_lit,
         }
@@ -55,6 +27,35 @@ impl<T: IntMutable> MutatorLitInt<T> {
             self.original_lit.add_one()
         }
     }
+}
+
+// implementation for `IntMutable` for all integer types
+macro_rules! lit_int_mutables {
+    { $($suf:ident, $ty:ident),* } => {
+        $(
+            impl IntMutable for $ty {
+                fn add_one(self) -> Self {
+                    self.checked_add(1).expect("overflow")
+                }
+            }
+        )*
+
+    }
+}
+
+lit_int_mutables! {
+    I8, i8,
+    I16, i16,
+    I32, i32,
+    I64, i64,
+    I128, i128,
+    Isize, isize,
+    U8, u8,
+    U16, u16,
+    U32, u32,
+    U64, u64,
+    U128, u128,
+    Usize, usize
 }
 
 #[cfg(test)]

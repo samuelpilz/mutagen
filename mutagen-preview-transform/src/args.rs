@@ -39,7 +39,7 @@ impl MutagenArgs {
                 let mut transformers = list.transformers;
                 transformers.sort_by_key(|t| transformer_order(t));
                 transformers
-            },
+            }
             Transformers::Not(list) => {
                 let mut transformers = all_transformers();
                 for l in &list.transformers {
@@ -63,16 +63,21 @@ impl MutagenArgs {
 
 fn all_transformers() -> Vec<String> {
     vec![
-        "lit_int".to_string(),
-        "lit_bool".to_string(),
-        "stmt".to_string(),
+        "lit_int",
+        "lit_bool",
+        "binop_add",
+        "stmt",
     ]
+        .iter()
+        .map(ToString::to_string)
+        .collect()
 }
 
 fn transformer_order(t: &str) -> i8 {
     match t {
         "lit_int" => i8::min_value(),
         "lit_bool" => 0,
+        "binop_add" => 5,
         "stmt" => 10,
         _ => i8::max_value(),
     }
@@ -88,6 +93,9 @@ fn mk_transformer(
             transform_info: transform_info,
         },
         "lit_bool" => box MutagenTransformerLitBool {
+            transform_info: transform_info,
+        },
+        "binop_add" => box MutagenTransformerBinopAdd {
             transform_info: transform_info,
         },
         "stmt" => box MutagenTransformerStmt {

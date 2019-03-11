@@ -1,4 +1,3 @@
-use quote::quote;
 use syn::fold::Fold;
 use syn::{parse_quote, Expr, ExprLit, Lit, LitBool};
 

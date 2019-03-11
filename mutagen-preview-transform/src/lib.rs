@@ -1,5 +1,6 @@
 #![feature(box_syntax)]
 #![feature(vec_remove_item)]
+#![feature(specialization)]
 
 extern crate proc_macro;
 use syn::{parse_macro_input, ItemFn};

@@ -9,7 +9,7 @@ pub struct MutatorLitBool {
 
 impl MutatorLitBool {
     pub fn new(mutator_id: u32, original_lit: bool) -> MutatorLitBool {
-        MutatorLitBool {
+        Self {
             mutator_id,
             original_lit,
         }
@@ -31,31 +31,31 @@ mod tests {
     use crate::MutagenRuntimeConfig;
 
     #[test]
-    pub fn mutator_lit_bool_false_inactive() {
+    pub fn false_inactive() {
         let mutator = MutatorLitBool::new(1, false);
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(0));
         assert_eq!(result, false)
     }
     #[test]
-    pub fn mutator_lit_bool_true_inactive() {
+    pub fn true_inactive() {
         let mutator = MutatorLitBool::new(1, true);
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(0));
         assert_eq!(result, true)
     }
     #[test]
-    pub fn mutator_lit_bool_false_active() {
+    pub fn false_active() {
         let mutator = MutatorLitBool::new(1, false);
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(1));
         assert_eq!(result, true)
     }
     #[test]
-    pub fn mutator_lit_bool_true_active() {
+    pub fn true_active() {
         let mutator = MutatorLitBool::new(1, true);
         let result = mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(1));
         assert_eq!(result, false)
     }
 
-    mod mutate_test {
+    mod test_simple_true {
 
         use crate::mutate;
         use ::mutagen_preview::MutagenRuntimeConfig;
@@ -76,6 +76,12 @@ mod tests {
                 assert_eq!(simple_true(), false);
             })
         }
+    }
+
+    mod test_simple_false {
+
+        use crate::mutate;
+        use ::mutagen_preview::MutagenRuntimeConfig;
 
         // constant false
         #[mutate(conf(local), only(lit_bool))]

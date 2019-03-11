@@ -1,4 +1,4 @@
-//! Mutator for int literals.
+//! Mutator for statements.
 
 use crate::MutagenRuntimeConfig;
 
@@ -8,7 +8,7 @@ pub struct MutatorStmt {
 
 impl MutatorStmt {
     pub fn new(mutator_id: u32) -> Self {
-        MutatorStmt { mutator_id }
+        Self { mutator_id }
     }
 
     pub fn run_mutator(self, runtime: &MutagenRuntimeConfig) -> bool {
