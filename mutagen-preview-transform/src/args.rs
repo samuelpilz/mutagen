@@ -11,6 +11,7 @@ mod arg_ast;
 mod arg_parse;
 
 use arg_parse::{ArgOptions, Conf, Transformers};
+use transformer_order::TRANSFORMER_ORDER;
 
 pub struct MutagenArgs {
     pub transformers: Vec<Box<dyn MutagenTransformer>>,
@@ -37,7 +38,7 @@ impl MutagenArgs {
             Transformers::All => all_transformers(),
             Transformers::Only(list) => {
                 let mut transformers = list.transformers;
-                transformers.sort_by_key(|t| transformer_order(t));
+                transformers.sort_by_key(|t| TRANSFORMER_ORDER[t]);
                 transformers
             }
             Transformers::Not(list) => {
@@ -61,26 +62,30 @@ impl MutagenArgs {
     }
 }
 
+// this funciton gives a vec of all transformers, in order they are executed
 fn all_transformers() -> Vec<String> {
     vec![
         "lit_int",
         "lit_bool",
         "binop_add",
-        "stmt",
     ]
         .iter()
         .map(ToString::to_string)
         .collect()
 }
 
-fn transformer_order(t: &str) -> i8 {
-    match t {
-        "lit_int" => i8::min_value(),
-        "lit_bool" => 0,
-        "binop_add" => 5,
-        "stmt" => 10,
-        _ => i8::max_value(),
+mod transformer_order {
+
+    use lazy_static::lazy_static;
+    use std::collections::HashMap;
+    use super::all_transformers;
+
+    lazy_static! {
+        pub static ref TRANSFORMER_ORDER: HashMap<String, usize> = {
+            all_transformers().into_iter().enumerate().map(|(i,s)| (s,i)).collect()
+        };
     }
+
 }
 
 fn mk_transformer(
@@ -96,9 +101,6 @@ fn mk_transformer(
             transform_info: transform_info,
         },
         "binop_add" => box MutagenTransformerBinopAdd {
-            transform_info: transform_info,
-        },
-        "stmt" => box MutagenTransformerStmt {
             transform_info: transform_info,
         },
         _ => panic!("unknown transformer {}", transformer_name),
