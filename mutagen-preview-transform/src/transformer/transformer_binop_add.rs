@@ -1,16 +1,14 @@
-use syn::fold::Fold;
 use syn::{parse_quote, Expr, ExprBinary, BinOp};
 
-use super::default_folds::fold_expr_default;
-use super::MutagenTransformer;
+use super::MutagenExprTransformer;
 use crate::transform_info::SharedTransformInfo;
 
 pub struct MutagenTransformerBinopAdd {
     pub transform_info: SharedTransformInfo,
 }
 
-impl Fold for MutagenTransformerBinopAdd {
-    fn fold_expr(&mut self, e: Expr) -> Expr {
+impl MutagenExprTransformer for MutagenTransformerBinopAdd {
+    fn map_expr(&mut self, e: Expr) -> Expr {
         match e {
             Expr::Binary(ExprBinary {
                 attrs: _,
@@ -29,9 +27,7 @@ impl Fold for MutagenTransformerBinopAdd {
                         )
                 }
             }
-            _ => fold_expr_default(self, e),
+            _ => e
         }
     }
 }
-
-impl MutagenTransformer for MutagenTransformerBinopAdd {}

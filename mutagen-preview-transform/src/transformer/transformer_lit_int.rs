@@ -1,16 +1,14 @@
-use syn::fold::Fold;
 use syn::{parse_quote, Expr, ExprLit, Lit};
 
-use super::default_folds::fold_expr_default;
-use super::MutagenTransformer;
+use super::MutagenExprTransformer;
 use crate::transform_info::SharedTransformInfo;
 
 pub struct MutagenTransformerLitInt {
     pub transform_info: SharedTransformInfo,
 }
 
-impl Fold for MutagenTransformerLitInt {
-    fn fold_expr(&mut self, e: Expr) -> Expr {
+impl MutagenExprTransformer for MutagenTransformerLitInt {
+    fn map_expr(&mut self, e: Expr) -> Expr {
         match e {
             Expr::Lit(ExprLit {
                 lit: Lit::Int(l),
@@ -27,9 +25,7 @@ impl Fold for MutagenTransformerLitInt {
                         )
                 }
             }
-            _ => fold_expr_default(self, e),
+            _ => e,
         }
     }
 }
-
-impl MutagenTransformer for MutagenTransformerLitInt {}

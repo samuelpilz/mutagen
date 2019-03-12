@@ -18,14 +18,11 @@ pub fn mutate(
     use quote::ToTokens;
 
     // read args and initialize transformers
-    let args = MutagenArgs::args_from_attr(attr.into());
-    let mut transformers = args.transformers;
+    let mut args = MutagenArgs::args_from_attr(attr.into());
 
     // run transformers one after the other
-    let mut result = parse_macro_input!(item as ItemFn);
-    for t in &mut transformers {
-        result = t.mutagen_transform_item_fn(result)
-    }
+    let input = parse_macro_input!(item as ItemFn);
+    let result = args.transformer_bundle.mutagen_transform_item_fn(input);
     let result = result.into_token_stream().into();
 
     result

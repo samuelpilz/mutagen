@@ -1,8 +1,6 @@
-use syn::fold::Fold;
 use syn::{parse_quote, Expr, ExprLit, Lit, LitBool};
 
-use super::default_folds::fold_expr_default;
-use super::MutagenTransformer;
+use super::MutagenExprTransformer;
 use crate::transform_info::SharedTransformInfo;
 
 pub struct MutagenTransformerLitBool {
@@ -10,8 +8,8 @@ pub struct MutagenTransformerLitBool {
 }
 
 // transforms bool literals to mutator expressions
-impl Fold for MutagenTransformerLitBool {
-    fn fold_expr(&mut self, e: Expr) -> Expr {
+impl MutagenExprTransformer for MutagenTransformerLitBool {
+    fn map_expr(&mut self, e: Expr) -> Expr {
         match e {
             Expr::Lit(ExprLit {
                 lit: Lit::Bool(LitBool { value, span: _ }),
@@ -27,9 +25,7 @@ impl Fold for MutagenTransformerLitBool {
                         )
                 }
             }
-            _ => fold_expr_default(self, e),
+            _ => e,
         }
     }
 }
-
-impl MutagenTransformer for MutagenTransformerLitBool {}
