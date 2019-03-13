@@ -4,10 +4,12 @@ use syn::{Expr, ItemFn};
 mod transformer_binop_add;
 mod transformer_lit_bool;
 mod transformer_lit_int;
+mod transformer_unop_not;
 
-pub use transformer_binop_add::MutagenTransformerBinopAdd;
-pub use transformer_lit_bool::MutagenTransformerLitBool;
-pub use transformer_lit_int::MutagenTransformerLitInt;
+use transformer_binop_add::MutagenTransformerBinopAdd;
+use transformer_lit_bool::MutagenTransformerLitBool;
+use transformer_lit_int::MutagenTransformerLitInt;
+use transformer_unop_not::MutagenTransformerUnopNot;
 
 use crate::transform_info::SharedTransformInfo;
 use crate::args::arg_options::Transformers;
@@ -76,6 +78,7 @@ impl Fold for MutagenTransformerBundle {
             result = t.map_expr(result);
         }
         result
+        // WIP: preserve span
     }
 }
 
@@ -127,6 +130,9 @@ fn mk_transformer(
         "lit_bool" => MutagenTransformer::Expr(box MutagenTransformerLitBool {
             transform_info: transform_info,
         }),
+        "unop_not" => MutagenTransformer::Expr(box MutagenTransformerUnopNot {
+            transform_info: transform_info,
+        }),
         "binop_add" => MutagenTransformer::Expr(box MutagenTransformerBinopAdd {
             transform_info: transform_info,
         }),
@@ -136,7 +142,7 @@ fn mk_transformer(
 
 // this funciton gives a vec of all transformers, in order they are executed
 fn all_transformers() -> Vec<String> {
-    ["lit_int", "lit_bool", "binop_add"]
+    ["lit_int", "lit_bool", "unop_not", "binop_add"]
         .iter()
         .map(ToString::to_string)
         .collect()

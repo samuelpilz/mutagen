@@ -84,7 +84,7 @@ mod tests {
 
     }
 
-    mod test_test_str_add {
+    mod test_str_add {
 
         use crate::mutate;
         use ::mutagen_preview::MutagenRuntimeConfig;
