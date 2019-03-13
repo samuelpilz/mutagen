@@ -12,7 +12,7 @@ The behavior of the `#[mutate]` attribute for single transformers is tested alon
 
 ### Test Isolation
 
-Instead of having a program-wide unique id per mutation, each function can have their own local mutation ids by writing adding `conf(local)` to the arguments of `#[mutate]`. This ensures that each test is independent from others. Moreover, only one transformer is enabled in each test. This is done by adding `only(...)` to the mutagen arguments.
+Instead of having a program-wide unique id per mutation, each function can have their own local mutation ids by writing adding `conf(local)` to the arguments of `#[mutate]`. This ensures that each test is independent from others. Moreover, only one transformer is enabled in each test by adding `only(...)` to the mutagen arguments.
 
 ### Exhaustive Testing
 
@@ -30,26 +30,28 @@ The current approach *works*, but quite hacky. If you come up with a nicer solut
 
 ## Example
 
-Typically, a complete test setup looks like this
+Typically, a complete test of some feature looks like this
 ```rust
-// only enable mutator `xyz`
-#[mutate(conf(local), only(xzy))]
-pub fn x() {
-    // function to mutate
-}
+mod test_x {
+    // only enable mutator `xyz`
+    #[mutate(conf(local), only(xzy))]
+    pub fn x() {
+        // function to mutate
+    }
 
-#[test]
-pub fn x_inactive() {
-    test_with_mutation_id(0, || {
-        // test and assert on `x()` where no mutations have been performed
-    })
-}
-#[test]
-pub fn x_active() {
-    test_with_mutation_id(1, || {
-        // test and assert that the correct mutation has been performed in `x()`
-    })
-}
+    #[test]
+    pub fn x_inactive() {
+        test_with_mutation_id(0, || {
+            // test and assert on `x()` where no mutations have been performed
+        })
+    }
+    #[test]
+    pub fn x_active() {
+        test_with_mutation_id(1, || {
+            // test and assert that the correct mutation has been performed in `x()`
+        })
+    }
 
-// more tests with other mutation ids, if more than one mutation has been performed
+    // more tests with other mutation ids, if more than one mutation has been performed
+}
 ```

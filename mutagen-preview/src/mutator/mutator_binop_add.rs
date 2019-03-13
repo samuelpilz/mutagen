@@ -59,7 +59,7 @@ mod tests {
         mutator.run_mutator(&MutagenRuntimeConfig::with_mutation_id(1));
     }
 
-    mod sum_u32 {
+    mod test_sum_u32 {
 
         use crate::mutate;
         use ::mutagen_preview::MutagenRuntimeConfig;
@@ -84,7 +84,7 @@ mod tests {
 
     }
 
-    mod test_str_add {
+    mod test_test_str_add {
 
         use crate::mutate;
         use ::mutagen_preview::MutagenRuntimeConfig;

@@ -56,3 +56,7 @@ Rust's type system allows to implement a custom implementation for the operators
 ### Mutations on defaults
 
 Many types implement the `Default` trait. For those who do, replacing any expression with its default leads to correctly compiling code.
+
+### Removing negation
+
+Most types that have a implementation for `Not` have `Output = Self`. This is true for the logic and numerical types. Removing the negation will be a valid mutation in most cases.

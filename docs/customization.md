@@ -2,28 +2,21 @@
 
 The behavior of `mutagen` and the attribute `#[mutate]` can be customized by adding arguments.
 
-## Examples
+## Configuring the list of transformers
+
+The list of transformers to be run can be specified by adding arguments `only(...)` and `not(...)`. In both cases, a list of transformers is required inside the brackets.
+
+### Examples
 
 ```rust
 // only mutate int-literals
 #[mutate(only(lit_int))]
 
-// only mutate int-literals and statements
-#[mutate(only(lit_int, stmt))]
+// only mutate int-literals and `+` operations.
+#[mutate(only(lit_int, binop_add))]
 
-// include all mutations except statement mutations
-#[mutate(not(stmt))]
-```
-
-## Format
-
-WIP: specify format formally
-
-### Options intended for testing `mutagen`
-
-```rust
-// assign mutation ids independently from the rest of the program
-#[mutate(conf(local))]
+// include all mutations except bool literal mutations
+#[mutate(not(lit_bool))]
 ```
 
 ## Known Transformers
@@ -33,27 +26,16 @@ Each implemented mutator has a corresponding transformer. The following table sh
 | Transformer name | Mutator |
 | `lit_int` | `MutatorLitInt` |
 | `lit_bool` | `MutatorLitBool` |
-| `stmt` | `MutatorStmt` |
+| `binop_add` | `MutatorBinopAdd` |
 
-## `#[mutate]` arguments
+The details of all mutators are described in their own folder (see: [overview](mutators)).
 
-should be possible:
+## arguments for transformers
 
-* mutagen configuration (`local` vs `global`)
-* define list of mutators
-* configure each mutator
+WIP: implement arguments for transformers
 
-should be easy:
-
-* leave out a single mutator
-* take only one mutator
-* configure a single mutator but do not change the list of mutators
-
-examples:
+Will probably look like this: some transformers have arguments for their mutators (after from list of mutators)
 
 ```
-#[mutate(conf(local))]
-#[mutate(only(lit_int))]
-#[mutate(not(stmt))]
-#[mutate(not(early_return), stmt(keep_return), lit_int(x+1))]
+#[mutate(not(early_return), lit_int(+1, =0))]
 ```
