@@ -107,10 +107,8 @@ mod tests {
                 assert_eq!(boolnot(true), true);
             })
         }
-
     }
 
-    // TODO:
     mod test_optimistic_incorrect {
 
         use crate::mutate;

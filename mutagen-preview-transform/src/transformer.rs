@@ -22,13 +22,15 @@ pub struct MutagenTransformerBundle {
     pub expr_transformers: Vec<Box<dyn MutagenExprTransformer>>,
 }
 
+/// trait that is implemented by all transformers.
+///
+/// each transformer should not inspect the expression recursively since recursion is performed by the `MutagenTransformerBundle`
 pub trait MutagenExprTransformer {
     fn map_expr(&mut self, expr: Expr) -> Expr;
 }
 
 impl Fold for MutagenTransformerBundle {
     fn fold_expr(&mut self, e: Expr) -> Expr {
-
         // transform content of the expression first
         let mut result = match e {
             Expr::Box(e0) => Expr::Box(self.fold_expr_box(e0)),
